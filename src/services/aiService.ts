@@ -1,5 +1,12 @@
 import { Property } from "../models/Property.js";
 
+type Message = {
+  role: string;
+  content: string;
+  tool_call_id?: string;
+  tool_calls?: any;
+};
+
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 // The AI Assistant is "agentic" because it can call this real function
@@ -48,7 +55,16 @@ search_properties tool to fetch real, current listings instead of guessing.
 Keep answers concise, friendly, and end with 1-2 short natural follow-up questions when useful.`;
 
 export async function getChatCompletion(history: { role: string; content: string }[]) {
-  const messages = [{ role: "system", content: SYSTEM_PROMPT }, ...history];
+
+  
+
+
+  // const messages = [{ role: "system", content: SYSTEM_PROMPT }, ...history];
+
+  const messages: Message[] = [
+    { role: "system", content: SYSTEM_PROMPT },
+    ...history as Message[]
+  ];
 
   let response = await callGroq(messages, true);
   let data = await response.json();
@@ -61,6 +77,16 @@ export async function getChatCompletion(history: { role: string; content: string
     const toolResult = await runToolCall(toolCall.function.name, args);
 
     messages.push(choice.message);
+
+   
+
+    // messages.push({
+    //   role: "tool",
+    //   tool_call_id: toolCall.id,
+    //   content: toolResult,
+    // });
+
+
     messages.push({
       role: "tool",
       tool_call_id: toolCall.id,
