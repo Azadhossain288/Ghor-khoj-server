@@ -14,10 +14,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000", 
-      "https://ghor-khoj-client-pw5r.vercel.app"
-    ],
+    origin: "https://ghor-khoj-client.vercel.app", 
     credentials: true,
   })
 );
