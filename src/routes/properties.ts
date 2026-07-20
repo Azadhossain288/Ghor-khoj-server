@@ -41,6 +41,13 @@ propertiesRouter.get("/", async (req, res) => {
   res.json({ items, total, page: pageNum, pages: Math.ceil(total / limitNum) });
 });
 
+
+// GET /api/properties/user/mine — logged-in user's own listings
+propertiesRouter.get("/user/mine", requireAuth, async (req, res) => {
+  const items = await Property.find({ ownerId: req.user!.id }).sort({ createdAt: -1 });
+  res.json({ items });
+});
+
 // GET /api/properties/:id — public details
 propertiesRouter.get("/:id", async (req, res) => {
   const property = await Property.findByIdAndUpdate(req.params.id, { $inc: { views: 1 } }, { new: true });
@@ -54,11 +61,7 @@ propertiesRouter.get("/:id", async (req, res) => {
   res.json({ property, related });
 });
 
-// GET /api/properties/user/mine — logged-in user's own listings
-propertiesRouter.get("/user/mine", requireAuth, async (req, res) => {
-  const items = await Property.find({ ownerId: req.user!.id }).sort({ createdAt: -1 });
-  res.json({ items });
-});
+
 
 // POST /api/properties — protected, create listing
 propertiesRouter.post("/", requireAuth, async (req, res) => {
